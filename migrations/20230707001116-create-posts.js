@@ -13,18 +13,21 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
-          model: "users", // Users 모델을 참조합니다.
-          key: "user_id", // Users 모델의 userId를 참조합니다.
+          model: "users", // users 모델을 참조합니다.
+          key: "user_id", // users 모델의 user_id를 참조합니다.
         },
         onDelete: "CASCADE",
       },
       nickname: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
       title: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
       content: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
       createdAt: {
