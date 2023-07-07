@@ -3,7 +3,7 @@ const router = express.Router();
 const { Op } = require('sequelize');
 const authMiddleWare = require('../middlewares/auth-middleware');
 
-const { posts, users } = require('../models');
+const { posts, users, post_likes } = require('../models');
 
 //게시글 작성 API
 router.post('/posts', authMiddleWare, async (req, res) => {
@@ -150,7 +150,7 @@ router.delete('/posts/:post_id', authMiddleWare, async (req, res) => {
     if (!post) {
       return res
         .status(404)
-        .json({ errorMessage: '게시글이 조재하지 않습니다.' });
+        .json({ errorMessage: '게시글이 존재하지 않습니다.' });
     } else if (user_id != post.User_id) {
       return res
         .status(403)
@@ -166,6 +166,37 @@ router.delete('/posts/:post_id', authMiddleWare, async (req, res) => {
     return res
       .status(500)
       .json({ errorMessage: '게시글 삭제에 실패하였습니다.' });
+  }
+});
+
+//게시글 좋아요 API
+router.put('/posts/:post_id/like', authMiddleWare, async (req, res) => {
+  const { post_id } = req.params;
+  const { user_id } = res.locals.user;
+
+  try {
+    const post = await posts.findOne({ where: { post_id } });
+    if (!post) {
+      return res
+        .status(404)
+        .json({ errorMessage: '게시글이 존재하지 않습니다.' });
+    }
+    const postLiked = await post_likes.findOne({
+      where: {
+        [Op.and]: [{ Post_id: post_id }, { User_id: user_id }],
+      },
+    });
+    if (postLiked) {
+      //좋아요가 존재할 경우
+      await postLiked.destroy();
+      return res
+        .status(200)
+        .json({ message: `${post.title}의 좋아요를 취소하였습니다.` });
+    }
+    await post_likes.create({ Post_id: post_id, User_id: user_id });
+    res.json({ message: `${post.title}의 좋아요를 등록하였습니다.` });
+  } catch (error) {
+    return res.status(500).json({ errorMessage: '좋아요에 실패하였습니다.' });
   }
 });
 
