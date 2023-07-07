@@ -200,4 +200,16 @@ router.put('/posts/:post_id/like', authMiddleWare, async (req, res) => {
   }
 });
 
+//좋아요 게시글 조회 API
+router.get('/like/posts', authMiddleWare, async (req, res) => {
+  try {
+    const likes = await post_likes.findAll();
+    const Posts = await posts.findAll({});
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ errorMessage: '좋아요 게시글 조회에 실패하였습니다.' });
+  }
+});
+
 module.exports = router;
