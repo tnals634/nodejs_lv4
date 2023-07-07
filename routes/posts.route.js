@@ -94,4 +94,51 @@ router.get('/posts/:post_id', async (req, res) => {
   }
 });
 
+//게시글 수정 API
+router.put('/posts/:post_id', authMiddleWare, async (req, res) => {
+  const { post_id } = req.params;
+  const { user_id } = res.locals.user;
+  const { title, content } = req.body;
+
+  try {
+    const post = await posts.findOne({ where: { post_id } });
+    if (!post) {
+      return res
+        .status(404)
+        .json({ errorMessage: '게시글이 존재하지 않습니다.' });
+    } else if (!title || !content) {
+      return res
+        .status(400)
+        .json({ errorMessage: '데이터 형식이 올바르지 않습니다.' });
+    } else if (user_id != post.User_id) {
+      return res
+        .status(403)
+        .json({ errorMessage: '게시글 수정 권한이 존재하지 않습니다.' });
+    } else if (typeof title != 'string') {
+      return res
+        .status(400)
+        .json({ errorMessage: '게시글 제목의 형식이 일치하지 않습니다.' });
+    } else if (typeof content != 'string') {
+      return res
+        .status(400)
+        .json({ errorMessage: '게시글 내용의 형식이 일치하지 않습니다.' });
+    }
+
+    await posts.update(
+      { title, content },
+      {
+        where: {
+          [Op.and]: [{ post_id }, { User_id: user_id }],
+        },
+      }
+    );
+
+    res.json({ message: '게시글을 수정하였습니다.' });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ errorMessage: '게시글 수정에 실패하였습니다.' });
+  }
+});
+
 module.exports = router;
