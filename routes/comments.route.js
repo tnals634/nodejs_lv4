@@ -41,4 +41,35 @@ router.post('/posts/:post_id/comments', authMiddleWare, async (req, res) => {
   }
 });
 
+//댓글 조회 API
+router.get('/posts/:post_id/comments', async (req, res) => {
+  const { post_id } = req.params;
+  try {
+    const post = await posts.findOne({ where: { post_id } });
+    if (!post) {
+      return res
+        .status(404)
+        .json({ errorMessage: '게시글이 존재하지 않습니다.' });
+    }
+    const Comments = await comments.findAll({
+      attributes: [
+        'comment_id',
+        'User_id',
+        'nickname',
+        'comment',
+        'createdAt',
+        'updatedAt',
+      ],
+      order: [['createdAt', 'DESC']],
+      where: { Post_id: post_id },
+    });
+
+    res.json({ comments: Comments });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ errorMessage: '댓글 조회에 실패하였습니다.' });
+  }
+});
+
 module.exports = router;
