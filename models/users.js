@@ -9,12 +9,50 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.hasMany(models.posts, {
+        //posts 모델에게 1:n 관계설정
+        sourceKey: "user_id",
+        foreignKey: "User_id",
+      });
+
+      this.hasMany(models.comments, {
+        sourceKey: "user_id",
+        foreignKey: "User_id",
+      });
+
+      this.hasMany(models.post_likes, {
+        sourceKey: "user_id",
+        foreignKey: "User_id",
+      });
     }
   }
   users.init(
     {
-      nickname: DataTypes.STRING,
-      password: DataTypes.STRING,
+      user_id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER,
+      },
+      nickname: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        unique: true,
+      },
+      password: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      createdAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
     },
     {
       sequelize,
