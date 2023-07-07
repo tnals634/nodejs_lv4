@@ -41,4 +41,27 @@ router.post('/posts', authMiddleWare, async (req, res) => {
   }
 });
 
+//게시글 목록 조회 API
+router.get('/posts', async (req, res) => {
+  try {
+    const Posts = await posts.findAll({
+      attributes: [
+        'post_id',
+        'User_id',
+        'nickname',
+        'title',
+        'createdAt',
+        'updatedAt',
+      ],
+      order: [['createdAt', 'DESC']],
+    });
+
+    res.json({ posts: Posts });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ errorMessage: '게시글 조회에 실패하였습니다.' });
+  }
+});
+
 module.exports = router;
