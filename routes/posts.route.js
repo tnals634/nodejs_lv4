@@ -141,4 +141,32 @@ router.put('/posts/:post_id', authMiddleWare, async (req, res) => {
   }
 });
 
+//게시글 삭제 API
+router.delete('/posts/:post_id', authMiddleWare, async (req, res) => {
+  const { post_id } = req.params;
+  const { user_id } = res.locals.user;
+  try {
+    const post = await posts.findOne({ where: { post_id } });
+    if (!post) {
+      return res
+        .status(404)
+        .json({ errorMessage: '게시글이 조재하지 않습니다.' });
+    } else if (user_id != post.User_id) {
+      return res
+        .status(403)
+        .json({ errorMessage: '게시글 삭제 권한이 존재하지 않습니다.' });
+    }
+
+    await posts.destroy({
+      where: { [Op.and]: [{ post_id }, { User_id: user_id }] },
+    });
+
+    res.json({ message: '게시글이 삭제되었습니다.' });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ errorMessage: '게시글 삭제에 실패하였습니다.' });
+  }
+});
+
 module.exports = router;
