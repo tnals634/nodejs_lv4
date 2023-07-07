@@ -64,4 +64,34 @@ router.get('/posts', async (req, res) => {
   }
 });
 
+//게시글 상세 조회 API
+router.get('/posts/:post_id', async (req, res) => {
+  const { post_id } = req.params;
+  try {
+    const post = await posts.findOne({
+      attributes: [
+        'post_id',
+        'User_id',
+        'nickname',
+        'title',
+        'content',
+        'createdAt',
+        'updatedAt',
+      ],
+      where: { post_id },
+    });
+    if (!post) {
+      return res
+        .status(403)
+        .json({ errorMessage: '게시글이 존재하지 않습니다.' });
+    }
+
+    res.json({ post });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ errorMessage: '게시글 조회에 실패하였습니다.' });
+  }
+});
+
 module.exports = router;
