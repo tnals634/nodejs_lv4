@@ -227,8 +227,20 @@ router.put('/posts/:post_id/like', authMiddleWare, async (req, res) => {
 //좋아요 게시글 조회 API
 router.get('/like/posts', authMiddleWare, async (req, res) => {
   try {
-    const post = await posts.findAll({ where: { likes: { [Op.gt]: 0 } } });
-    res.json({ post });
+    //게시글중 좋아요가 0초과인 것의 게시글만
+    const post = await posts.findAll({
+      attributes: [
+        'post_id',
+        'User_id',
+        'nickname',
+        'title',
+        'likes',
+        'createdAt',
+        'updatedAt',
+      ],
+      where: { likes: { [Op.gt]: 0 } },
+    });
+    res.json({ posts: post });
   } catch (error) {
     return res
       .status(500)
