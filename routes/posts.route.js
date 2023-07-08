@@ -3,7 +3,7 @@ const router = express.Router();
 const { Op } = require('sequelize');
 const authMiddleWare = require('../middlewares/auth-middleware');
 
-const { posts, users, post_likes } = require('../models');
+const { posts, users, post_likes, count_likes } = require('../models');
 
 //게시글 작성 API
 router.post('/posts', authMiddleWare, async (req, res) => {
@@ -189,11 +189,35 @@ router.put('/posts/:post_id/like', authMiddleWare, async (req, res) => {
     if (postLiked) {
       //좋아요가 존재할 경우
       await postLiked.destroy();
+      const countPostLike = await post_likes.findAll({
+        where: { Post_id: post_id },
+      });
+      await posts.update(
+        { likes: countPostLike.length },
+        {
+          where: {
+            [Op.and]: [{ post_id }],
+          },
+        }
+      );
       return res
         .status(200)
         .json({ message: `${post.title}의 좋아요를 취소하였습니다.` });
     }
     await post_likes.create({ Post_id: post_id, User_id: user_id });
+
+    const countPostLike = await post_likes.findAll({
+      where: { Post_id: post_id },
+    });
+    await posts.update(
+      { likes: countPostLike.length },
+      {
+        where: {
+          [Op.and]: [{ post_id }],
+        },
+      }
+    );
+
     res.json({ message: `${post.title}의 좋아요를 등록하였습니다.` });
   } catch (error) {
     return res.status(500).json({ errorMessage: '좋아요에 실패하였습니다.' });
@@ -203,8 +227,8 @@ router.put('/posts/:post_id/like', authMiddleWare, async (req, res) => {
 //좋아요 게시글 조회 API
 router.get('/like/posts', authMiddleWare, async (req, res) => {
   try {
-    const likes = await post_likes.findAll();
-    const Posts = await posts.findAll({});
+    const post = await posts.findAll({ where: { likes: { [Op.gt]: 0 } } });
+    res.json({ post });
   } catch (error) {
     return res
       .status(500)

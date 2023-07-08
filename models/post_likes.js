@@ -18,11 +18,6 @@ module.exports = (sequelize, DataTypes) => {
         targetKey: 'post_id',
         foreignKey: 'Post_id',
       });
-
-      this.hasOne(models.count_likes, {
-        targetKey: 'Post_id',
-        foreignKey: 'Post_id',
-      });
     }
   }
   post_likes.init(
