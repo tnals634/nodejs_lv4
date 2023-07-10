@@ -8,3 +8,5 @@ erd 그림
 
 swagger 적용해보기
 ![swagger code](https://github.com/tnals634/nodejs_lv4/assets/50979515/34789b65-7241-49c2-9d58-98ee59b55197)
+
+swagger 틀만 만들어짐, 회원가입 로그인은 되고 나머진 아직입니다.
