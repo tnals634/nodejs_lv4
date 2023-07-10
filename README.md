@@ -5,3 +5,6 @@ erd 그림
 ![nodejs_lv4_erd](https://github.com/tnals634/nodejs_lv4/assets/50979515/92c5100e-434a-4837-8e5b-134ac0f467e9)
 
 [api 명세서](https://feather-almanac-87a.notion.site/nodejs_lv4-API-1-2f2832fa97d342b1b2c2da402cebc311?pvs=4)
+
+swagger 적용해보기
+![swagger code](https://github.com/tnals634/nodejs_lv4/assets/50979515/34789b65-7241-49c2-9d58-98ee59b55197)
