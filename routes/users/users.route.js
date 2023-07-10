@@ -3,12 +3,12 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const env = process.env;
-const { users } = require('../models');
+const { Users } = require('../../models');
 
 //회원가입 API
 router.post('/signup', async (req, res) => {
   const { nickname, password, confirmPassword } = req.body;
-  const isExistUser = await users.findOne({
+  const isExistUser = await Users.findOne({
     where: {
       nickname: nickname,
     },
@@ -54,8 +54,8 @@ router.post('/signup', async (req, res) => {
         .json({ errorMessage: '패스워드가 일치하지 않습니다.' });
     }
 
-    //users 생성
-    await users.create({ nickname, password });
+    //Users 생성
+    await Users.create({ nickname, password });
 
     return res.status(201).json({ message: '회원 가입에 성공하였습니다.' });
   } catch (error) {
@@ -66,7 +66,7 @@ router.post('/signup', async (req, res) => {
 //로그인 API
 router.post('/login', async (req, res) => {
   const { nickname, password } = req.body;
-  const user = await users.findOne({
+  const user = await Users.findOne({
     where: { nickname: nickname },
   });
   try {
