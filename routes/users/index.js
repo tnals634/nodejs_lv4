@@ -53,3 +53,5 @@ userRouter.post('/signup', userController.createUser);
  *                description: "유저 비밀번호"
  */
 userRouter.post('/login', userController.setUser);
+
+module.exports = userRouter;

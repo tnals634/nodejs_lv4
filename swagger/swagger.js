@@ -20,6 +20,7 @@ const options = {
     './routes/index.js',
     './routes/users/*',
     './routes/posts/*',
+    './routes/comments/*',
     './swagger/*',
   ],
 };
