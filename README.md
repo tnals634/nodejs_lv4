@@ -10,3 +10,5 @@ swagger 적용해보기
 ![swagger code](https://github.com/tnals634/nodejs_lv4/assets/50979515/34789b65-7241-49c2-9d58-98ee59b55197)
 
 swagger 틀만 만들어짐, 회원가입 로그인은 되고 나머진 아직입니다.
+
+현재 swagger 오류가 많아 이 파일에서는 지운상태이고, 다른 파일에서 작업중입니다.
