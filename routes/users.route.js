@@ -3,12 +3,12 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const env = process.env;
-const { Users } = require('../../models');
+const { users } = require('../models');
 
 //회원가입 API
 router.post('/signup', async (req, res) => {
   const { nickname, password, confirmPassword } = req.body;
-  const isExistUser = await Users.findOne({
+  const isExistUser = await users.findOne({
     where: {
       nickname: nickname,
     },
@@ -55,7 +55,7 @@ router.post('/signup', async (req, res) => {
     }
 
     //Users 생성
-    await Users.create({ nickname, password });
+    await users.create({ nickname, password });
 
     return res.status(201).json({ message: '회원 가입에 성공하였습니다.' });
   } catch (error) {
@@ -66,21 +66,25 @@ router.post('/signup', async (req, res) => {
 //로그인 API
 router.post('/login', async (req, res) => {
   const { nickname, password } = req.body;
-  const user = await Users.findOne({
-    where: { nickname: nickname },
-  });
+
   try {
+    const user = await users.findOne({
+      where: { nickname: nickname },
+    });
+    console.log('---');
     if (!user || user.password !== password) {
       return res
         .status(412)
         .json({ errorMessage: '닉네임 또는 패스워드를 확인해주세요.' });
     }
+    console.log('---');
     const token = jwt.sign(
       {
         user_id: user.user_id,
       },
       env.JWT_SECRET_KEY
     );
+    console.log('---');
     res.cookie('authorization', `Bearer ${token}`);
     return res.json({ message: '로그인에 성공하였습니다.' });
   } catch (error) {

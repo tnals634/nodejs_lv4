@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { Op } = require('sequelize');
-const authMiddleWare = require('../../middlewares/auth-middleware');
+const authMiddleWare = require('../middlewares/auth-middleware');
 
-const { Posts, Users, Comments } = require('../../models');
+const { posts, users, comments } = require('../models');
 
 //댓글 작성 API
 router.post('/posts/:post_id/comments', authMiddleWare, async (req, res) => {
@@ -12,8 +12,8 @@ router.post('/posts/:post_id/comments', authMiddleWare, async (req, res) => {
   const { user_id } = res.locals.user;
 
   try {
-    const user = await Users.findOne({ where: { user_id } });
-    const post = await Posts.findOne({ where: { post_id } });
+    const user = await users.findOne({ where: { user_id } });
+    const post = await posts.findOne({ where: { post_id } });
     if (!post) {
       return res
         .status(404)
@@ -26,7 +26,7 @@ router.post('/posts/:post_id/comments', authMiddleWare, async (req, res) => {
         .json({ errorMessage: '댓글의 형식이 일치하지 않습니다.' });
     }
 
-    await Comments.create({
+    await comments.create({
       Post_id: post_id,
       User_id: user_id,
       nickname: user.nickname,
@@ -45,13 +45,13 @@ router.post('/posts/:post_id/comments', authMiddleWare, async (req, res) => {
 router.get('/posts/:post_id/comments', async (req, res) => {
   const { post_id } = req.params;
   try {
-    const post = await Posts.findOne({ where: { post_id } });
+    const post = await posts.findOne({ where: { post_id } });
     if (!post) {
       return res
         .status(404)
         .json({ errorMessage: '게시글이 존재하지 않습니다.' });
     }
-    const comments = await Comments.findAll({
+    const allComment = await comments.findAll({
       attributes: [
         'comment_id',
         'User_id',
@@ -64,7 +64,7 @@ router.get('/posts/:post_id/comments', async (req, res) => {
       where: { Post_id: post_id },
     });
 
-    res.json({ comments });
+    res.json({ comments: allComment });
   } catch (error) {
     return res
       .status(500)
@@ -82,8 +82,8 @@ router.put(
     const { user_id } = res.locals.user;
 
     try {
-      const post = await Posts.findOne({ where: { post_id } });
-      const findComment = await Comments.findOne({ where: { comment_id } });
+      const post = await posts.findOne({ where: { post_id } });
+      const findComment = await comments.findOne({ where: { comment_id } });
       if (!post) {
         return res
           .status(404)
@@ -104,7 +104,7 @@ router.put(
           .json({ errorMessage: '댓글의 수정 권한이 존재하지 않습니다.' });
       }
 
-      await Comments.update(
+      await comments.update(
         { comment },
         {
           where: {
@@ -135,8 +135,8 @@ router.delete(
     const { user_id } = res.locals.user;
 
     try {
-      const post = await Posts.findOne({ where: { post_id } });
-      const comment = await Comments.findOne({ where: { comment_id } });
+      const post = await posts.findOne({ where: { post_id } });
+      const comment = await comments.findOne({ where: { comment_id } });
       if (!post) {
         return res
           .status(404)
@@ -151,7 +151,7 @@ router.delete(
           .json({ errorMessage: '댓글의 삭제 권한이 존재하지 않습니다.' });
       }
 
-      await Comments.destroy({
+      await comments.destroy({
         where: {
           [Op.and]: [
             { comment_id },
