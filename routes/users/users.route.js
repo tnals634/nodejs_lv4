@@ -3,7 +3,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const env = process.env;
-const { users } = require('../models');
+const { users } = require('../../models');
 
 //회원가입 API
 router.post('/signup', async (req, res) => {
@@ -77,14 +77,12 @@ router.post('/login', async (req, res) => {
         .status(412)
         .json({ errorMessage: '닉네임 또는 패스워드를 확인해주세요.' });
     }
-    console.log('---');
     const token = jwt.sign(
       {
         user_id: user.user_id,
       },
       env.JWT_SECRET_KEY
     );
-    console.log('---');
     res.cookie('authorization', `Bearer ${token}`);
     return res.json({ message: '로그인에 성공하였습니다.' });
   } catch (error) {

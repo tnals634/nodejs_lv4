@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { Op } = require('sequelize');
-const authMiddleWare = require('../middlewares/auth-middleware');
+const authMiddleWare = require('../../middlewares/auth-middleware');
 
-const { posts, users, comments } = require('../models');
+const { posts, users, comments } = require('../../models');
 
 //댓글 작성 API
 router.post('/posts/:post_id/comments', authMiddleWare, async (req, res) => {

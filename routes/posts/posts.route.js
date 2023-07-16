@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { Op } = require('sequelize');
-const authMiddleWare = require('../middlewares/auth-middleware');
+const authMiddleWare = require('../../middlewares/auth-middleware');
 
-const { posts, users, post_likes } = require('../models');
+const { posts, users, post_likes } = require('../../models');
 
 //게시글 작성 API
 router.post('/posts', authMiddleWare, async (req, res) => {
@@ -206,7 +206,7 @@ router.put('/posts/:post_id/like', authMiddleWare, async (req, res) => {
         .status(200)
         .json({ message: `${post.title}의 좋아요를 취소하였습니다.` });
     }
-    await Likes.create({ Post_id: post_id, User_id: user_id });
+    await post_likes.create({ Post_id: post_id, User_id: user_id });
 
     const countPostLike = await post_likes.findAll({
       where: { Post_id: post_id },
